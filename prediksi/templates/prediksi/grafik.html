@@ -1,0 +1,199 @@
+<div class="charts-grid">
+    <div class="glass-chart-card">
+        <div class="chart-heading"><span class="dot"></span>1. Sebaran Harga Kos</div>
+        <div class="chart-sub">Distribusi jumlah kos per rentang harga sewa bulanan dengan garis batas budget kamu.</div>
+        <div class="chart-wrap">
+            <canvas id="chartSebaranHarga"></canvas>
+        </div>
+        <div class="ai-note"><span class="dot"></span><div><strong>Penjelasan AI:</strong> {{ ai_insight.chart_1 }}</div></div>
+    </div>
+
+    <div class="glass-chart-card">
+        <div class="chart-heading"><span class="dot"></span>2. Jarak dan Fasilitas AC</div>
+        <div class="chart-sub">Sebaran harga berdasarkan jarak (km), status AC, serta posisi titik perkiraan model.</div>
+        <div class="chart-wrap">
+            <canvas id="chartJarakAc"></canvas>
+        </div>
+        <div class="ai-note"><span class="dot"></span><div><strong>Penjelasan AI:</strong> {{ ai_insight.chart_2 }}</div></div>
+    </div>
+
+    <div class="glass-chart-card">
+        <div class="chart-heading"><span class="dot"></span>3. Rata-rata Harga per Rating</div>
+        <div class="chart-sub">Perbandingan rata-rata harga sewa bulanan pada tiap kelompok rating kos.</div>
+        <div class="chart-wrap">
+            <canvas id="chartRataRating"></canvas>
+        </div>
+        <div class="ai-note"><span class="dot"></span><div><strong>Penjelasan AI:</strong> {{ ai_insight.chart_3 }}</div></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function () {
+        const rawData = JSON.parse('{{ chart_data_json|escapejs }}');
+
+        function formatRupiah(val) {
+            return "Rp " + Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        const budgetLinePlugin = {
+            id: "budgetLinePlugin",
+            afterDatasetsDraw(chart) {
+                const { ctx, chartArea, scales } = chart;
+                if (!chartArea || !scales.x) return;
+                const labels = chart.data.labels || [];
+                const idx = Math.min(
+                    labels.length - 1,
+                    Math.max(0, Math.floor(((rawData.budget_in - 500000) / (1500000 - 500000)) * labels.length))
+                );
+                const xPos = scales.x.getPixelForValue(idx);
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([6, 6]);
+                ctx.lineWidth = 2.2;
+                ctx.strokeStyle = "#831843";
+                ctx.moveTo(xPos, chartArea.top);
+                ctx.lineTo(xPos, chartArea.bottom);
+                ctx.stroke();
+                ctx.restore();
+            }
+        };
+
+        new Chart(document.getElementById("chartSebaranHarga"), {
+            type: "bar",
+            data: {
+                labels: rawData.hist_labels,
+                datasets: [{
+                    label: "Jumlah Kos",
+                    data: rawData.hist_counts,
+                    backgroundColor: "rgba(236, 72, 153, 0.78)",
+                    borderColor: "#be185d",
+                    borderWidth: 1.2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            afterBody: () => "Budget: " + rawData.budget_fmt
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: "#500724", font: { size: 12, family: "Inter" } } },
+                    y: { beginAtZero: true, ticks: { stepSize: 1, color: "#500724", font: { size: 12, family: "Inter" } } }
+                }
+            },
+            plugins: [budgetLinePlugin]
+        });
+
+        new Chart(document.getElementById("chartJarakAc"), {
+            type: "scatter",
+            data: {
+                datasets: [
+                    {
+                        label: "AC: Ya",
+                        data: rawData.scatter_ya,
+                        backgroundColor: "#db2777",
+                        pointRadius: 6.5,
+                        pointHoverRadius: 8.5
+                    },
+                    {
+                        label: "AC: Tidak",
+                        data: rawData.scatter_tdk,
+                        backgroundColor: "#f9a8d4",
+                        borderColor: "#be185d",
+                        borderWidth: 1.2,
+                        pointRadius: 6.5,
+                        pointHoverRadius: 8.5
+                    },
+                    {
+                        label: "Perkiraan",
+                        data: [rawData.pred_point],
+                        backgroundColor: "#831843",
+                        borderColor: "#ffffff",
+                        borderWidth: 2,
+                        pointStyle: "star",
+                        pointRadius: 12,
+                        pointHoverRadius: 14
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: "#4a0d2a", boxWidth: 12, font: { size: 12, family: "Inter" } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                const pt = ctx.raw;
+                                const prefix = pt.nama ? pt.nama + " — " : "";
+                                return prefix + pt.x.toFixed(2) + " km, " + formatRupiah(pt.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: "Jarak (km)", color: "#702447", font: { size: 12, weight: "600", family: "Inter" } },
+                        ticks: { color: "#500724", font: { size: 11, family: "Inter" } }
+                    },
+                    y: {
+                        title: { display: true, text: "Harga / Bulan", color: "#702447", font: { size: 12, weight: "600", family: "Inter" } },
+                        ticks: {
+                            color: "#500724",
+                            font: { size: 11, family: "Inter" },
+                            callback: (v) => formatRupiah(v)
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("chartRataRating"), {
+            type: "bar",
+            data: {
+                labels: rawData.rating_labels,
+                datasets: [{
+                    label: "Rata-rata Harga",
+                    data: rawData.rating_values,
+                    backgroundColor: "rgba(244, 114, 182, 0.82)",
+                    borderColor: "#db2777",
+                    borderWidth: 1.2,
+                    borderRadius: 8,
+                    maxBarThickness: 120
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => "Rata-rata: " + formatRupiah(ctx.parsed.y)
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: "#500724", font: { size: 12, family: "Inter" } } },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "#500724",
+                            font: { size: 11, family: "Inter" },
+                            callback: (v) => formatRupiah(v)
+                        }
+                    }
+                }
+            }
+        });
+    })();
+</script>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perkiraan Harga Kos Madiun</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #4a0d2a;
+            background:
+                radial-gradient(circle at 12% 14%, rgba(244, 114, 182, 0.34), transparent 38%),
+                radial-gradient(circle at 88% 18%, rgba(251, 113, 133, 0.26), transparent 40%),
+                radial-gradient(circle at 50% 88%, rgba(249, 168, 212, 0.28), transparent 45%),
+                linear-gradient(160deg, #fff5f8 0%, #fdf2f8 52%, #fffafc 100%);
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: rgba(255, 241, 246, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(244, 114, 182, 0.28);
+            padding: 1.8rem 1.35rem;
+        }
+        .side-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 1.12rem;
+            font-weight: 800;
+            color: #4a0d2a;
+        }
+        .side-sub {
+            font-size: 0.82rem;
+            color: #831843;
+            margin: 0.25rem 0 1.25rem 0;
+        }
+        .side-card {
+            background: rgba(255, 255, 255, 0.62);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 18px;
+            padding: 0.95rem 1.05rem;
+            box-shadow: 0 8px 24px rgba(219, 39, 119, 0.06);
+            margin-bottom: 0.95rem;
+        }
+        .filter-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.65rem;
+        }
+        .filter-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.42rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #500724;
+        }
+        .filter-badge {
+            background: rgba(236, 72, 153, 0.14);
+            color: #9d174d;
+            font-size: 0.79rem;
+            font-weight: 700;
+            padding: 0.2rem 0.62rem;
+            border-radius: 999px;
+            border: 1px solid rgba(236, 72, 153, 0.24);
+        }
+        /* Range slider modern pink */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(244, 114, 182, 0.28);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #db2777;
+            box-shadow: 0 3px 10px rgba(219, 39, 119, 0.35);
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #db2777;
+            box-shadow: 0 3px 10px rgba(219, 39, 119, 0.35);
+            cursor: pointer;
+        }
+        /* Pill radio AC */
+        .ac-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+        }
+        .ac-option input {
+            display: none;
+        }
+        .ac-option span {
+            display: block;
+            text-align: center;
+            padding: 0.42rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(236, 72, 153, 0.28);
+            background: rgba(255, 255, 255, 0.68);
+            color: #6b1d40;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .ac-option input:checked + span {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(219, 39, 119, 0.25);
+        }
+        .main {
+            max-width: 1120px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.2rem 2.2rem 3.2rem 2.2rem;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 32px rgba(219, 39, 119, 0.08);
+            border-radius: 22px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .glass-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #4a0d2a;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+        .glass-sub {
+            color: #702447;
+            font-size: 0.96rem;
+            margin: 0.45rem 0 0 0;
+        }
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ec4899;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .glass-est {
+            background: rgba(255, 255, 255, 0.64);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(244, 114, 182, 0.35);
+            box-shadow: 0 10px 26px rgba(219, 39, 119, 0.07);
+            border-radius: 18px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.6rem;
+        }
+        .est-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #9d174d;
+        }
+        .est-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4a0d2a;
+            margin: 0.25rem 0;
+        }
+        .est-note {
+            font-size: 0.9rem;
+            color: #6b1d40;
+        }
+        .tabs-nav {
+            display: flex;
+            gap: 0.55rem;
+            margin-bottom: 1.2rem;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(244, 114, 182, 0.28);
+            border-radius: 12px;
+            padding: 0.5rem 1.05rem;
+            color: #6b1d40;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: rgba(244, 114, 182, 0.24);
+            border-color: rgba(219, 39, 119, 0.5);
+            color: #4a0d2a;
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        .caption-text {
+            font-size: 0.86rem;
+            color: #702447;
+            margin-bottom: 0.9rem;
+        }
+        .glass-table-wrap {
+            background: rgba(255, 255, 255, 0.62);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 26px rgba(219, 39, 119, 0.06);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.85rem 1.1rem;
+            border-bottom: 1px solid rgba(244, 114, 182, 0.16);
+        }
+        th {
+            background: rgba(253, 242, 248, 0.85);
+            color: #831843;
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(236, 72, 153, 0.14);
+            color: #9d174d;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+        .glass-chart-card {
+            background: rgba(255, 255, 255, 0.64);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 1.2rem 1.35rem;
+            box-shadow: 0 10px 26px rgba(219, 39, 119, 0.06);
+        }
+        .chart-heading {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #4a0d2a;
+            margin-bottom: 0.2rem;
+        }
+        .chart-sub {
+            font-size: 0.82rem;
+            color: #702447;
+            margin-bottom: 0.9rem;
+        }
+        .chart-wrap {
+            position: relative;
+            height: 300px;
+        }
+        @media (max-width: 960px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .ai-note {
+            margin-top: 1rem;
+            padding: 0.7rem 0.9rem;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(244, 114, 182, 0.26);
+            font-size: 0.83rem;
+            line-height: 1.45;
+            color: #500724;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.45rem;
+        }
+        .ai-note .dot {
+            margin-top: 0.35rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="side-title"><span class="dot"></span>Atur Kriteria Kos Kamu</div>
+            <div class="side-sub">Sesuaikan filter di bawah ini.</div>
+
+            <form id="filterForm" method="get">
+                <div class="side-card">
+                    <div class="filter-row">
+                        <span class="filter-name"><span class="dot"></span>Jarak</span>
+                        <span class="filter-badge" id="jarakBadge">{{ jarak_in }} km</span>
+                    </div>
+                    <input type="range" id="jarakRange" name="jarak" min="{{ min_jarak }}" max="{{ max_jarak }}" step="0.10" value="{{ jarak_in }}">
+                </div>
+
+                <div class="side-card">
+                    <div class="filter-row">
+                        <span class="filter-name"><span class="dot"></span>Budget Bulanan</span>
+                        <span class="filter-badge" id="budgetBadge">{{ budget_fmt }}</span>
+                    </div>
+                    <input type="range" id="budgetRange" name="budget" min="{{ min_budget }}" max="{{ max_budget }}" step="50000" value="{{ budget_in }}">
+                </div>
+
+                <div class="side-card">
+                    <div class="filter-row">
+                        <span class="filter-name"><span class="dot"></span>Rating Kos</span>
+                        <span class="filter-badge" id="ratingBadge">{{ rating_in }} / 5.0</span>
+                    </div>
+                    <input type="range" id="ratingRange" name="rating" min="{{ min_rating }}" max="{{ max_rating }}" step="0.1" value="{{ rating_in }}">
+                </div>
+
+                <div class="side-card">
+                    <div class="filter-row">
+                        <span class="filter-name"><span class="dot"></span>Fasilitas AC</span>
+                        <span class="filter-badge">{{ ac_in }}</span>
+                    </div>
+                    <div class="ac-group">
+                        <label class="ac-option">
+                            <input type="radio" name="ac" value="semua" {% if ac_in == "semua" %}checked{% endif %}>
+                            <span>semua</span>
+                        </label>
+                        <label class="ac-option">
+                            <input type="radio" name="ac" value="ya" {% if ac_in == "ya" %}checked{% endif %}>
+                            <span>ya</span>
+                        </label>
+                        <label class="ac-option">
+                            <input type="radio" name="ac" value="tidak" {% if ac_in == "tidak" %}checked{% endif %}>
+                            <span>tidak</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </aside>
+
+        <main class="main">
+            <div class="glass-header">
+                <h1 class="glass-title">Perkiraan Harga Kos Madiun</h1>
+                <p class="glass-sub">
+                    Bantu memperkirakan harga bulanan dan menemukan kos yang paling sesuai dengan kebutuhan kamu.
+                </p>
+            </div>
+
+            <div class="glass-est">
+                <div class="est-label"><span class="dot"></span>Perkiraan Harga Wajar</div>
+                <div class="est-value">{{ pred_rp_fmt }} / bulan</div>
+                <div class="est-note">{{ ket_budget }}</div>
+            </div>
+
+            <div class="tabs-nav">
+                <button type="button" class="tab-btn active" data-tab="tab4Kos">Paling Mendekati Kriteria</button>
+                <button type="button" class="tab-btn" data-tab="tabDiagram">Grafik & Ringkasan</button>
+                <button type="button" class="tab-btn" data-tab="tabSemua">Semua Kos</button>
+            </div>
+
+            <section id="tab4Kos" class="tab-panel active">
+                <div class="caption-text">
+                    Diurutkan berdasarkan kesesuaian dengan jarak (~{{ jarak_in }} km), budget ({{ budget_fmt }}), rating (~{{ rating_in }}), dan AC ('{{ ac_in }}').
+                </div>
+                <div class="glass-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Kos</th>
+                                <th>Jarak</th>
+                                <th>AC</th>
+                                <th>Rating</th>
+                                <th>Harga / Bulan</th>
+                                <th>Budget</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kos in empat_kos %}
+                            <tr>
+                                <td><strong>{{ kos.nama }}</strong></td>
+                                <td>{{ kos.jarak_fmt }}</td>
+                                <td>{{ kos.ac }}</td>
+                                <td>{{ kos.rating }}</td>
+                                <td>{{ kos.harga_fmt }}</td>
+                                <td><span class="status-pill">{{ kos.budget_status }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="tabDiagram" class="tab-panel">
+                {% include "prediksi/grafik.html" %}
+            </section>
+
+            <section id="tabSemua" class="tab-panel">
+                <div class="glass-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Kos</th>
+                                <th>Jarak</th>
+                                <th>AC</th>
+                                <th>Rating</th>
+                                <th>Harga / Bulan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kos in semua_kos %}
+                            <tr>
+                                <td><strong>{{ kos.nama }}</strong></td>
+                                <td>{{ kos.jarak_fmt }}</td>
+                                <td>{{ kos.ac }}</td>
+                                <td>{{ kos.rating }}</td>
+                                <td>{{ kos.harga_fmt }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById("filterForm");
+        const jarakRange = document.getElementById("jarakRange");
+        const budgetRange = document.getElementById("budgetRange");
+        const ratingRange = document.getElementById("ratingRange");
+
+        function fmtRp(val) {
+            return "Rp " + Number(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        jarakRange.addEventListener("input", () => {
+            document.getElementById("jarakBadge").textContent = parseFloat(jarakRange.value).toFixed(2) + " km";
+        });
+        budgetRange.addEventListener("input", () => {
+            document.getElementById("budgetBadge").textContent = fmtRp(budgetRange.value);
+        });
+        ratingRange.addEventListener("input", () => {
+            document.getElementById("ratingBadge").textContent = parseFloat(ratingRange.value).toFixed(1) + " / 5.0";
+        });
+
+        [jarakRange, budgetRange, ratingRange].forEach((el) => {
+            el.addEventListener("change", () => form.submit());
+        });
+        document.querySelectorAll('input[name="ac"]').forEach((radio) => {
+            radio.addEventListener("change", () => form.submit());
+        });
+
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+                document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+                btn.classList.add("active");
+                document.getElementById(btn.dataset.tab).classList.add("active");
+            });
+        });
+    </script>
+</body>
+</html>
