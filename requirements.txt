@@ -1,4 +1,4 @@
-﻿Django
+Django
 pandas
 numpy
 scikit-learn
